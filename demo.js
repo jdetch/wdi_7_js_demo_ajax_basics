@@ -7,4 +7,46 @@ $(document).ajaxSend(function(event, xhr, settings) {
 
 $(document).ready(function() {
   // Your ajax code in here!
+  $.ajax({
+    url: 'http://jsonstub.com/articles',
+    type: 'GET'
+  })
+  .done(function(data){
+    data.forEach(function(article){
+      var $article = $('<article>');
+      $article.append($('<a href="#">').data("article_id", article.id) // better to do this with href
+        .append($('<h2>').text(article.title))
+      );
+      $article.append($('<p>').text(article.summary));
+      $('.articles').append($article);
+    });
+  })
+  .fail(function() {
+    console.log("error");
+  })
+  .always(function() {
+    console.log("complete");
+  });
+
+  $('.articles').on("click", "article a", function(event) {
+    event.preventDefault();
+
+    $.ajax({
+      url: 'http://jsonstub.com/articles/' + $(this).data("article_id"),
+      type: 'GET'
+    })
+    .done(function(article) {
+      event.preventDefault();
+      $('.articles').empty();
+      var $article = $('<article>');
+      $article.append($('<h2>').text(article.title));
+      $article.append($('<p>').text(article.content));
+      $('.articles').append($article);
+    })
+
+    .fail(function() { console.log("error"); })
+    .always(function() { console.log("COMPLETE WOW"); });
+
+  });
+
 });
